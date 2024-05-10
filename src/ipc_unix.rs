@@ -94,8 +94,11 @@ impl DiscordIpc for DiscordIpcClient {
     }
 
     fn read(&mut self, buffer: &mut [u8]) -> Result<()> {
-        let socket = self.socket.as_mut().unwrap();
-
+        let socket = self.socket.as_mut();
+        if socket.is_none() {
+            return Err("Couldn't connect to the Discord IPC socket".into());
+        }
+        let socket = socket.unwrap();
         socket.read_exact(buffer)?;
 
         Ok(())
@@ -105,7 +108,11 @@ impl DiscordIpc for DiscordIpcClient {
         let data = json!({});
         if self.send(data, 2).is_ok() {}
 
-        let socket = self.socket.as_mut().unwrap();
+        let socket = self.socket.as_mut();
+        if socket.is_none() {
+            return Err("Couldn't connect to the Discord IPC socket".into());
+        }
+        let socket = socket.unwrap();
 
         socket.flush()?;
         match socket.shutdown(Shutdown::Both) {
