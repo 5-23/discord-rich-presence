@@ -6,6 +6,7 @@ pub fn pack(opcode: u32, data_len: u32) -> Result<Vec<u8>, Box<dyn Error>> {
     let mut bytes = Vec::new();
 
     for byte_array in &[opcode.to_le_bytes(), data_len.to_le_bytes()] {
+        println!("{:?}", byte_array);
         bytes.extend_from_slice(byte_array);
     }
 
